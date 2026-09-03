@@ -1,3 +1,12 @@
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 const detail = document.querySelector(".detail");
 const detailTitle = document.querySelector(".detail-title");
 const master = document.querySelector(".master");
@@ -110,7 +119,7 @@ function _callbackForInnerMasterOnClickEvent(
       vulnerableAppEndPointData[id]["Detailed Information"][key][
         "HtmlTemplate"
       ];
-    document.getElementById("vulnerabilityDescription").innerHTML =
+    document.getElementById("vulnerabilityDescription").textContent =
       vulnerableAppEndPointData[id]["Description"];
     let urlToFetchHtmlTemplate = htmlTemplate
       ? "/VulnerableApp/templates/" + vulnerabilitySelected + "/" + htmlTemplate
@@ -133,7 +142,12 @@ function _callbackForInnerMasterOnClickEvent(
         if (requestToken !== thisRequestToken) {
           return;
         }
-        detailTitle.innerHTML = responseText;
+        var _tmpDoc = new DOMParser().parseFromString(responseText, "text/html");
+        _tmpDoc.querySelectorAll("script").forEach(function (s) { s.remove(); });
+        detailTitle.innerHTML = "";
+        Array.from(_tmpDoc.body.childNodes).forEach(function (node) {
+          detailTitle.appendChild(document.adoptNode(node));
+        });
         _loadDynamicJSAndCSS(urlToFetchHtmlTemplate, () => {
           // Re-check: the asset load itself is async, so navigation could
           // have moved on again between the AJAX response and now.
@@ -187,7 +201,7 @@ function createColumn(detailedInformationArray, key) {
   span.classList.add(
     isSecure ? "secure-variant-tooltip-text" : "unsecure-variant-tooltip-text"
   );
-  span.innerHTML = isSecure ? variantTooltip.secure : variantTooltip.unsecure;
+  span.textContent = isSecure ? variantTooltip.secure : variantTooltip.unsecure;
   svgWithTooltip.appendChild(span);
   svgWithTooltip.appendChild(_getSvgElementForVariant(isSecure));
   column.appendChild(svgWithTooltip);
@@ -241,13 +255,13 @@ function handleElementAutoSelection(vulnerableAppEndPointData, id = 0) {
   }
 
   if (id === 0) {
-    detailTitle.innerHTML = vulnerableAppEndPointData[id]["Description"];
+    detailTitle.textContent = vulnerableAppEndPointData[id]["Description"];
   } else {
     innerMaster.innerHTML = "";
   }
 
   vulnerabilitySelected = vulnerableAppEndPointData[id]["Name"];
-  detailTitle.innerHTML = vulnerableAppEndPointData[id]["Description"];
+  detailTitle.textContent = vulnerableAppEndPointData[id]["Description"];
   appendNewColumn(vulnerableAppEndPointData, id);
 }
 
@@ -322,12 +336,12 @@ function genericResponseHandler(xmlHttpRequest, callBack, isJson, onError) {
         callBack(xmlHttpRequest.responseText, xmlHttpRequest);
       }
     } else if (xmlHttpRequest.status == 400) {
-      alert("There was an error 400");
+      console.warn("There was an error 400");
       if (typeof onError === "function") {
         onError(xmlHttpRequest);
       }
     } else {
-      alert("something else other than 200/401/403/404 was returned");
+      console.warn("something else other than 200/401/403/404 was returned");
       if (typeof onError === "function") {
         onError(xmlHttpRequest);
       }
@@ -426,9 +440,9 @@ function _addingEventListenerToShowHideHelpButton(vulnerableAppEndPointData) {
       helpText =
         helpText +
         "<li><b>Description about the attack:</b> " +
-        description +
+        escapeHtml(description) +
         "<br/><b>Payload:</b> " +
-        curlPayload +
+        escapeHtml(curlPayload) +
         "</li>";
     }
     helpText = helpText + "</ol>";
