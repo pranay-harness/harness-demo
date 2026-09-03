@@ -31,7 +31,7 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ControllerException.class)
     public ResponseEntity<String> handleControllerExceptions(
             ControllerException ex, WebRequest request) {
-        LOGGER.error("Controller Exception Occurred :-", ex);
+        LOGGER.error("Controller Exception Occurred: {}", ex.getClass().getSimpleName());
         return new ResponseEntity<String>(
                 ex.getExceptionStatusCode().getMessage(null, messageBundle),
                 HttpStatus.INTERNAL_SERVER_ERROR);
@@ -39,7 +39,7 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleExceptions(Exception ex, WebRequest request) {
-        LOGGER.error("General Exception Occurred :- ", ex);
+        LOGGER.error("General Exception Occurred: {}", ex.getClass().getSimpleName());
         return new ResponseEntity<String>(
                 ExceptionStatusCodeEnum.SYSTEM_ERROR.getMessage(null, messageBundle),
                 HttpStatus.INTERNAL_SERVER_ERROR);
