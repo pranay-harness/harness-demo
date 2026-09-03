@@ -1,13 +1,16 @@
+-- Training fixture seed data — all passwords below are intentional demo values for vulnerability exercises,
+-- not production credentials. They are stored in an in-memory H2 database that is reset on each restart.
+
 -- Level 1: SQL Injection
--- Real password: 'not_needed_for_sqli'
+-- Training fixture password (exposed intentionally to demonstrate SQL injection):
 INSERT INTO auth_users VALUES (1, 'admin_sqli', 'not_needed_for_sqli', NULL, 'PLAIN', 1, 'admin_sqli@example.com', 'ADMIN');
 
 -- Level 2: Sensitive Data Logging
--- Real password: 'v9K#2mLp!8zQ'
+-- Training fixture password (exposed intentionally to demonstrate sensitive data in logs):
 INSERT INTO auth_users VALUES (2, 'admin_logs', 'v9K#2mLp!8zQ', NULL, 'PLAIN', 2, 'admin_logs@example.com', 'ADMIN');
 
 -- Level 3: Plaintext Storage
--- Real password: 'b7X$4nRj-6mW'
+-- Training fixture password (exposed intentionally to demonstrate plaintext storage vulnerability):
 INSERT INTO auth_users VALUES (3, 'admin_plain', 'b7X$4nRj-6mW', NULL, 'PLAIN', 3, 'admin_plain@example.com', 'ADMIN');
 
 -- Level 4: MD5 Hashing -- value below is an MD5 hash digest of demo password 'f2C@9tYk*1hP', not a raw credential
