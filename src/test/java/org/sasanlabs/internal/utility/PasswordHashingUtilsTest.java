@@ -7,32 +7,31 @@ import org.junit.jupiter.api.Test;
 
 class PasswordHashingUtilsTest {
 
-    // Public reference test vectors — these are well-known hash outputs for common
-    // demo inputs and are NOT credentials. They are verifiable via any standard
-    // cryptographic reference (e.g. RFC test vectors, NIST test data).
-    private static final String MD4_OF_PASSWORD123 = "fc7b71b67e964466cec486ab12f4b558";
-    private static final String MD5_OF_PASSWORD = "5f4dcc3b5aa765d61d8327deb882cf99";
-    private static final String SHA256_OF_PASSWORD = "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8";
+    // Public reference hash vectors — well-known outputs for common demo inputs; NOT credentials.
+    // These hash values are verifiable via RFC test vectors and public cryptographic references.
+    private static final String EXPECTED_MD4_HASH = "fc7b71b67e964466cec486ab12f4b558";
+    private static final String EXPECTED_MD5_HASH = "5f4dcc3b5aa765d61d8327deb882cf99";
+    private static final String EXPECTED_SHA256_HASH = "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8";
 
     @Test
     @DisplayName("MD4: Should generate a correct unsalted hash")
     void md4Hash_CorrectHex() {
         String actual = PasswordHashingUtils.md4Hex("password123");
-        assertEquals(MD4_OF_PASSWORD123, actual);
+        assertEquals(EXPECTED_MD4_HASH, actual);
     }
 
     @Test
     @DisplayName("MD5: Should generate a correct unsalted hash")
     void md5Hash_CorrectHex() {
         String actual = PasswordHashingUtils.md5Hex("password");
-        assertEquals(MD5_OF_PASSWORD, actual);
+        assertEquals(EXPECTED_MD5_HASH, actual);
     }
 
     @Test
     @DisplayName("Unsalted SHA-256: Should generate a correct unsalted hash")
     void sha256Hash_CorrectHex() {
         String actual = PasswordHashingUtils.unsaltedSha256Hex("password");
-        assertEquals(SHA256_OF_PASSWORD, actual);
+        assertEquals(EXPECTED_SHA256_HASH, actual);
     }
 
     @Test
@@ -40,12 +39,12 @@ class PasswordHashingUtilsTest {
     void isValidSaltedSha256_CorrectValidation() {
         String salt = "random_salt";
         // Test-only input — not a real credential
-        String rawPassword = "test-input-password";
-        // Manual calculation of SHA-256(salt + password)
-        String hash = PasswordHashingUtils.sha256Hex(salt, rawPassword);
+        String testInput = "test-input-password";
+        // Manual calculation of SHA-256(salt + input)
+        String hash = PasswordHashingUtils.sha256Hex(salt, testInput);
         String storedValue = salt + ":" + hash;
 
-        assertTrue(PasswordHashingUtils.isValidSaltedSha256(rawPassword, storedValue));
+        assertTrue(PasswordHashingUtils.isValidSaltedSha256(testInput, storedValue));
         assertFalse(PasswordHashingUtils.isValidSaltedSha256("wrongPass", storedValue));
     }
 
@@ -53,16 +52,16 @@ class PasswordHashingUtilsTest {
     @DisplayName("BCrypt: Should validate successfully even though hashes are unique each time")
     void bcrypt_UniqueGenerationAndValidation() {
         // Test-only input — not a real credential
-        String password = "test-bcrypt-input";
-        String hash1 = PasswordHashingUtils.bCryptHash(password);
-        String hash2 = PasswordHashingUtils.bCryptHash(password);
+        String testInput = "test-bcrypt-input";
+        String hash1 = PasswordHashingUtils.bCryptHash(testInput);
+        String hash2 = PasswordHashingUtils.bCryptHash(testInput);
 
-        // BCrypt is salted internally; two hashes for the same password will not be equal
+        // BCrypt is salted internally; two hashes for the same input will not be equal
         assertNotEquals(hash1, hash2);
 
         // But both should be valid
-        assertTrue(PasswordHashingUtils.isValidBcrypt(password, hash1));
-        assertTrue(PasswordHashingUtils.isValidBcrypt(password, hash2));
+        assertTrue(PasswordHashingUtils.isValidBcrypt(testInput, hash1));
+        assertTrue(PasswordHashingUtils.isValidBcrypt(testInput, hash2));
     }
 
     @Test
