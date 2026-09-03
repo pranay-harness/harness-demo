@@ -13,13 +13,6 @@ public final class PasswordHashingUtils {
 
     private static final String HASH_SEPARATOR = ":";
 
-    /**
-     * Fixed 12-byte GCM nonce used in lmDesEncrypt. Reuse across calls is safe here because every
-     * invocation uses a distinct AES-256 key derived from a different 7-byte password fragment.
-     */
-    private static final byte[] LM_AES_FIXED_NONCE = {
-        'K', 'G', 'S', '!', '@', '#', '$', '%', 0, 0, 0, 0
-    };
     private static final int bcryptWorkFactor = 12;
 
     private PasswordHashingUtils() {}
@@ -173,11 +166,21 @@ public final class PasswordHashingUtils {
         byte[] key32 = new byte[32];
         System.arraycopy(key8, 0, key32, 0, 8);
 
+        // Generate a fresh random 12-byte IV per call to prevent GCM nonce reuse (CWE-329).
+        byte[] iv = new byte[12];
+        new SecureRandom().nextBytes(iv);
+
         Cipher aes = Cipher.getInstance("AES/GCM/NoPadding");
         aes.init(
                 Cipher.ENCRYPT_MODE,
                 new SecretKeySpec(key32, "AES"),
-                new GCMParameterSpec(128, LM_AES_FIXED_NONCE));
-        return aes.doFinal("KGS!@#$%".getBytes(StandardCharsets.US_ASCII));
+                new GCMParameterSpec(128, iv));
+        byte[] cipherBytes = aes.doFinal("KGS!@#$%".getBytes(StandardCharsets.US_ASCII));
+
+        // Prepend IV to ciphertext so a decoder can recover it: output = IV (12 bytes) + cipher.
+        byte[] output = new byte[iv.length + cipherBytes.length];
+        System.arraycopy(iv, 0, output, 0, iv.length);
+        System.arraycopy(cipherBytes, 0, output, iv.length, cipherBytes.length);
+        return output;
     }
 }
