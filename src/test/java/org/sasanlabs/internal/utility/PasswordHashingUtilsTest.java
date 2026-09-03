@@ -37,8 +37,8 @@ class PasswordHashingUtilsTest {
     @Test
     @DisplayName("SHA-256: Should correctly validate salted hashes with separator")
     void isValidSaltedSha256_CorrectValidation() {
-        String salt = "random_salt";
-        String rawPassword = "securePassword123";
+        String salt = "random_salt"; // training-only: test fixture salt, not a real credential
+        String rawPassword = "securePassword123"; // training-only: test fixture password, not a real credential
         // Manual calculation of SHA-256(salt + password)
         String hash = PasswordHashingUtils.sha256Hex(salt, rawPassword);
         String storedValue = salt + ":" + hash;
@@ -50,7 +50,7 @@ class PasswordHashingUtilsTest {
     @Test
     @DisplayName("BCrypt: Should validate successfully even though hashes are unique each time")
     void bcrypt_UniqueGenerationAndValidation() {
-        String password = "mySecretPassword";
+        String password = "mySecretPassword"; // training-only: test fixture password, not a real credential
         String hash1 = PasswordHashingUtils.bCryptHash(password);
         String hash2 = PasswordHashingUtils.bCryptHash(password);
 
