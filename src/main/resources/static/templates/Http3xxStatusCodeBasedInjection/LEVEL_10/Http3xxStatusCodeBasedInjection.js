@@ -32,25 +32,49 @@ function updatePlaceholderDiv() {
     boxSizing: "border-box",
   });
 
-  overlay.innerHTML =
-    '<div class="redirect-modal-card">' +
-    '<div class="redirect-modal-icon-wrap">' +
-    '<span class="redirect-modal-icon">&#9888;</span>' +
-    "</div>" +
-    '<h2 class="redirect-modal-title">You are leaving VulnerableApp</h2>' +
-    '<p class="redirect-modal-subtitle">You are about to be redirected to an external site. Please review the destination before continuing.</p>' +
-    '<div class="redirect-url-box"><span class="redirect-dest-url"></span></div>' +
-    '<div class="redirect-modal-actions">' +
-    '<button class="btn-redirect-close">Close</button>' +
-    '<button class="btn-redirect-continue">Continue</button>' +
-    "</div>" +
-    "</div>";
+  var modalCard = document.createElement("div");
+  modalCard.className = "redirect-modal-card";
 
+  var iconWrap = document.createElement("div");
+  iconWrap.className = "redirect-modal-icon-wrap";
+  var iconSpan = document.createElement("span");
+  iconSpan.className = "redirect-modal-icon";
+  iconSpan.textContent = "⚠";
+  iconWrap.appendChild(iconSpan);
+  modalCard.appendChild(iconWrap);
+
+  var modalTitle = document.createElement("h2");
+  modalTitle.className = "redirect-modal-title";
+  modalTitle.textContent = "You are leaving VulnerableApp";
+  modalCard.appendChild(modalTitle);
+
+  var modalSubtitle = document.createElement("p");
+  modalSubtitle.className = "redirect-modal-subtitle";
+  modalSubtitle.textContent =
+    "You are about to be redirected to an external site. Please review the destination before continuing.";
+  modalCard.appendChild(modalSubtitle);
+
+  var urlBox = document.createElement("div");
+  urlBox.className = "redirect-url-box";
+  var destSpan = document.createElement("span");
+  destSpan.className = "redirect-dest-url";
+  urlBox.appendChild(destSpan);
+  modalCard.appendChild(urlBox);
+
+  var actions = document.createElement("div");
+  actions.className = "redirect-modal-actions";
+  var btnClose = document.createElement("button");
+  btnClose.className = "btn-redirect-close";
+  btnClose.textContent = "Close";
+  var btnContinue = document.createElement("button");
+  btnContinue.className = "btn-redirect-continue";
+  btnContinue.textContent = "Continue";
+  actions.appendChild(btnClose);
+  actions.appendChild(btnContinue);
+  modalCard.appendChild(actions);
+
+  overlay.appendChild(modalCard);
   document.body.appendChild(overlay);
-
-  var destSpan = overlay.querySelector(".redirect-dest-url");
-  var btnContinue = overlay.querySelector(".btn-redirect-continue");
-  var btnClose = overlay.querySelector(".btn-redirect-close");
 
   // Intercept the link click — show the interstitial popup instead of navigating
   anchor.addEventListener("click", function (event) {
