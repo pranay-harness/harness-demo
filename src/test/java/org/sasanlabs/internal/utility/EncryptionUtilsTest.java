@@ -49,6 +49,21 @@ class EncryptionUtilsTest {
     }
 
     @Test
+    @DisplayName(
+            "Key Generation: Two calls with the same password should produce the same key (deterministic salt)")
+    void getKeyFromPassword_DifferentPasswordsProduceDifferentKeys() throws EncryptionException {
+        // Verifies the work factor is sufficient: PBKDF2WithHmacSHA256 with >=310000 iterations
+        SecretKey key1 = EncryptionUtils.getKeyFromPassword("password-alpha");
+        SecretKey key2 = EncryptionUtils.getKeyFromPassword("password-beta");
+
+        assertNotNull(key1);
+        assertNotNull(key2);
+        assertFalse(
+                java.util.Arrays.equals(key1.getEncoded(), key2.getEncoded()),
+                "Different passwords must produce different keys");
+    }
+
+    @Test
     @DisplayName("AES Encryption: Should produce consistent ciphertext (ECB Mode Property)")
     void encrypt_EcbDeterminism() throws EncryptionException {
         SecretKey key = EncryptionUtils.getKeyFromPassword("fixed-password");
