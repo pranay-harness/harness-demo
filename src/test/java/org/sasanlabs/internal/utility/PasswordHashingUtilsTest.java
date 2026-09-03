@@ -17,12 +17,16 @@ class PasswordHashingUtilsTest {
     }
 
     @Test
-    @DisplayName("MD5: Should generate a correct unsalted hash")
+    @DisplayName("MD5: Should generate a deterministic peppered hash")
     void md5Hash_CorrectHex() {
-        // Known MD5 hash digest for "password" — test vector, not a raw credential
-        String expected = "5f4dcc3b5aa765d61d8327deb882cf99";
-        String actual = PasswordHashingUtils.md5Hex("password");
-        assertEquals(expected, actual);
+        // md5Hex applies a per-JVM-instance pepper (CWE-759 fix); the raw MD5 of the input
+        // is no longer the expected output.  Verify determinism and distinctness instead.
+        String hash1 = PasswordHashingUtils.md5Hex("password");
+        String hash2 = PasswordHashingUtils.md5Hex("password");
+        assertNotNull(hash1);
+        assertFalse(hash1.isEmpty());
+        assertEquals(hash1, hash2); // same input → same peppered hash within a JVM run
+        assertNotEquals(PasswordHashingUtils.md5Hex("other_value"), hash1); // distinct inputs differ
     }
 
     @Test

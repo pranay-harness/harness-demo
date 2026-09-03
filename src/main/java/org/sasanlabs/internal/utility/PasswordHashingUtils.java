@@ -49,12 +49,24 @@ public final class PasswordHashingUtils {
         }
     }
 
+    /**
+     * Per-JVM-instance pepper applied to md5Hex to prevent generic rainbow-table attacks
+     * (CWE-759). Generated once with SecureRandom so the hash is deterministic within a run.
+     */
+    private static final String MD5_PEPPER;
+
+    static {
+        byte[] pepper = new byte[16];
+        new SecureRandom().nextBytes(pepper);
+        MD5_PEPPER = EncodingUtils.bytesToHex(pepper);
+    }
+
     public static String md4Hex(String rawPassword) {
         return getHashAsHex(rawPassword, HashAlgorithm.MD4);
     }
 
     public static String md5Hex(String rawPassword) {
-        return getHashAsHex(rawPassword, HashAlgorithm.MD5);
+        return getHashAsHex(MD5_PEPPER + rawPassword, HashAlgorithm.MD5);
     }
 
     public static String sha1Hex(String rawPassword) {
