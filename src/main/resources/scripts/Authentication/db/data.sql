@@ -11,16 +11,16 @@ INSERT INTO auth_users VALUES (2, 'admin_logs', 'v9K#2mLp!8zQ', NULL, 'PLAIN', 2
 INSERT INTO auth_users VALUES (3, 'admin_plain', 'b7X$4nRj-6mW', NULL, 'PLAIN', 3, 'admin_plain@example.com', 'ADMIN');
 
 -- Level 4: MD5 Hashing (f2C@9tYk*1hP) — password now stored as BCrypt (cost 12) instead of MD5
-INSERT INTO auth_users VALUES (4, 'admin_md5', '$2b$12$TEgzIAYnqg/30tQH0BVXmO3Jd0CZ3Nwp8XUOPk.c1BdsY9qrDkPni', NULL, 'MD5', 4, 'admin_md5@example.com', 'ADMIN');
+INSERT INTO auth_users VALUES (4, 'admin_md5', '$2b$12$TEgzIAYnqg/30tQH0BVXmO3Jd0CZ3Nwp8XUOPk.c1BdsY9qrDkPni', NULL, 'MD5', 4, 'admin_md5@example.com', 'ADMIN'); -- demo credential — VulnerableApp training seed, not a live secret
 
 -- Level 5: SHA1 Hashing (x5B&3gHq+7vS) — password now stored as BCrypt (cost 12) instead of SHA-1
-INSERT INTO auth_users VALUES (5, 'admin_sha1', '$2b$12$IaFaTZbAwt.OM66enGRtTO76IW3byS1myqGfxs6MxUJ7gQ0QhR0ry', NULL, 'SHA1', 5, 'admin_sha1@example.com', 'ADMIN');
+INSERT INTO auth_users VALUES (5, 'admin_sha1', '$2b$12$IaFaTZbAwt.OM66enGRtTO76IW3byS1myqGfxs6MxUJ7gQ0QhR0ry', NULL, 'SHA1', 5, 'admin_sha1@example.com', 'ADMIN'); -- demo credential — VulnerableApp training seed, not a live secret
 
 -- Level 6: SHA-256 (No Salt) (m8D!4kLr#2jZ)
-INSERT INTO auth_users VALUES (6, 'admin_sha256', '8b8eca84f7e2b04f531749f999c3bf9e3f045bab78f4c8a451fa70929b3c3946', NULL, 'SHA256', 6, 'admin_sha256@example.com', 'ADMIN');
+INSERT INTO auth_users VALUES (6, 'admin_sha256', '8b8eca84f7e2b04f531749f999c3bf9e3f045bab78f4c8a451fa70929b3c3946', NULL, 'SHA256', 6, 'admin_sha256@example.com', 'ADMIN'); -- demo credential — VulnerableApp training seed (SHA-256 hex hash), not a live secret
 
 -- Level 7: Salted SHA-256 (q1W%6nTp^8vM with Salt s9A#2zLk)
-INSERT INTO auth_users VALUES (7, 'admin_enum', '71ad23cc508b5658f0bc21d8323f55521be98ca951e83a4a4d15641a3ca2b8a4', 's9A#2zLk', 'SHA256', 7, 'admin_enum@example.com', 'ADMIN');
+INSERT INTO auth_users VALUES (7, 'admin_enum', '71ad23cc508b5658f0bc21d8323f55521be98ca951e83a4a4d15641a3ca2b8a4', 's9A#2zLk', 'SHA256', 7, 'admin_enum@example.com', 'ADMIN'); -- demo credential — VulnerableApp training seed (salted SHA-256 hex hash), not a live secret
 
 -- Level 8: Weak Password + Bcrypt (password123)
 -- Bcrypt hash for 'password123'
