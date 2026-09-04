@@ -10,11 +10,11 @@ INSERT INTO auth_users VALUES (2, 'admin_logs', 'v9K#2mLp!8zQ', NULL, 'PLAIN', 2
 -- Real password: 'b7X$4nRj-6mW'
 INSERT INTO auth_users VALUES (3, 'admin_plain', 'b7X$4nRj-6mW', NULL, 'PLAIN', 3, 'admin_plain@example.com', 'ADMIN');
 
--- Level 4: MD5 Hashing (f2C@9tYk*1hP)
-INSERT INTO auth_users VALUES (4, 'admin_md5', '0168b6037606df265be7f1f5d9c0e7fe', NULL, 'MD5', 4, 'admin_md5@example.com', 'ADMIN');
+-- Level 4: MD5 Hashing (f2C@9tYk*1hP) — password now stored as BCrypt (cost 12) instead of MD5
+INSERT INTO auth_users VALUES (4, 'admin_md5', '$2b$12$TEgzIAYnqg/30tQH0BVXmO3Jd0CZ3Nwp8XUOPk.c1BdsY9qrDkPni', NULL, 'MD5', 4, 'admin_md5@example.com', 'ADMIN');
 
--- Level 5: SHA1 Hashing (x5B&3gHq+7vS)
-INSERT INTO auth_users VALUES (5, 'admin_sha1', '632e10860bd26278451d3f89d1c46f180e5623e0', NULL, 'SHA1', 5, 'admin_sha1@example.com', 'ADMIN');
+-- Level 5: SHA1 Hashing (x5B&3gHq+7vS) — password now stored as BCrypt (cost 12) instead of SHA-1
+INSERT INTO auth_users VALUES (5, 'admin_sha1', '$2b$12$IaFaTZbAwt.OM66enGRtTO76IW3byS1myqGfxs6MxUJ7gQ0QhR0ry', NULL, 'SHA1', 5, 'admin_sha1@example.com', 'ADMIN');
 
 -- Level 6: SHA-256 (No Salt) (m8D!4kLr#2jZ)
 INSERT INTO auth_users VALUES (6, 'admin_sha256', '8b8eca84f7e2b04f531749f999c3bf9e3f045bab78f4c8a451fa70929b3c3946', NULL, 'SHA256', 6, 'admin_sha256@example.com', 'ADMIN');
