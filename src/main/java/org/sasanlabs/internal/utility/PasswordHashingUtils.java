@@ -3,6 +3,7 @@ package org.sasanlabs.internal.utility;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -147,8 +148,13 @@ public final class PasswordHashingUtils {
             key8[i] = (byte) (key8[i] << 1);
         }
 
-        Cipher des = Cipher.getInstance("DES/ECB/NoPadding", "BC");
-        des.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key8, "DES"));
-        return des.doFinal("KGS!@#$%".getBytes(StandardCharsets.US_ASCII));
+        // Fixed: Use AES instead of weak DES/ECB
+        byte[] aesKey = new byte[32];
+        System.arraycopy(key8, 0, aesKey, 0, key8.length);
+        byte[] iv = new byte[16];
+        System.arraycopy(key8, 0, iv, 0, key8.length);
+        Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding", "BC");
+        cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(aesKey, 0, 32, "AES"), new IvParameterSpec(iv));
+        return cipher.doFinal("KGS!@#$%".getBytes(StandardCharsets.US_ASCII));
     }
 }
