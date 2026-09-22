@@ -35,10 +35,15 @@ public class BenchmarkResultWriter {
     }
 
     public Path write(BenchmarkResult result, String benchmarksDir) throws IOException {
-        Path dir = Paths.get(benchmarksDir);
+        Path dir = Paths.get(benchmarksDir).toAbsolutePath();
+        dir = dir.normalize();
         Files.createDirectories(dir);
         String fileName = sanitizeToolName(result.getTool()) + "-results.json";
-        Path target = dir.resolve(fileName);
+        Path target = dir.resolve(fileName).normalize();
+        // Ensure the resolved path is within the base directory to prevent path traversal
+        if (!target.startsWith(dir)) {
+            throw new IllegalArgumentException("Path traversal detected: " + fileName);
+        }
         Path temp = Files.createTempFile(dir, fileName + ".", ".tmp");
         try {
             objectMapper.writerWithDefaultPrettyPrinter().writeValue(temp.toFile(), result);
