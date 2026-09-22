@@ -318,11 +318,35 @@ public class EndPointsInformationProvider implements IEndPointsInformationProvid
         String payload = vulnerableAppProperties.getAttackVectorProperty(payloadKey);
         if (StringUtils.isBlank(payload)) {
             payload = messageBundle.getString(payloadKey, null);
+            // Resolve environment variables from i18n properties
+            payload = resolveEnvironmentVariables(payload);
         }
         if (StringUtils.isBlank(payload)) {
             payload = "Payload is not applicable.";
         }
         return payload;
+    }
+
+    private String resolveEnvironmentVariables(String value) {
+        if (value == null) {
+            return value;
+        }
+        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("\\$\\{([^}]+)\\}");
+        java.util.regex.Matcher matcher = pattern.matcher(value);
+        StringBuffer result = new StringBuffer();
+
+        while (matcher.find()) {
+            String varName = matcher.group(1);
+            String envValue = System.getenv(varName);
+            if (envValue == null) {
+                envValue = System.getProperty(varName);
+            }
+            if (envValue != null) {
+                matcher.appendReplacement(result, java.util.regex.Matcher.quoteReplacement(envValue));
+            }
+        }
+        matcher.appendTail(result);
+        return result.toString();
     }
 
     private String buildFacadeHintDescription(AttackVector attackVector) {
