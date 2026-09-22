@@ -1,0 +1,9 @@
+[bandit]
+# Bandit configuration: exclude test files from assert_used checks
+# Test files properly use assert statements as part of unit test assertions.
+
+# Exclude test directories/patterns from all checks
+exclude_dirs: ['/tests', '/*_test.py', '/*/test_*.py', '/benchmarks/*/scripts/test_*.py']
+
+# Skip B101 (assert_used) for test files specifically
+skips: B101:benchmarks/ZAP/scripts/test_*.py
